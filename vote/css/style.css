@@ -1,0 +1,129 @@
+/* some style */
+
+.graph {
+    //border: 2px solid #4A235A;
+}
+
+.bars {
+    position: relative;
+    margin: 20px;
+    padding: 10px 0px;
+
+    border: 2px solid #4A235A;
+    color: white;
+}
+/*
+.bars .bar {
+    background-color: orange;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: "";
+}*/
+.bars .bar {
+    position: relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+
+}
+.bars .bar .underflow {
+    z-index: 100;
+    overflow: hidden;
+    white-space: nowrap;
+    color: orange;
+    position: absolute;
+    background-color: white;
+}
+
+.bars .bar .content {
+    transition: width 0.5s;
+    z-index: 200;
+    overflow: hidden;
+    white-space: nowrap;
+    color: white;
+    background-color: orange;
+    position: relative;
+}
+
+
+.graph .result {
+    font-size: 2em;
+    margin: 0.5em;
+    color: red;
+}
+
+.graph .result .result-text {
+    color: green;
+    font-weight: bold;
+}
+
+.vote button {
+    font-size: 1.1em;
+    margin: 15px;
+}
+.change-address button {
+    font-size: 0.8em;
+    padding: 7px;
+}
+
+
+.airdrop-card-holder {
+    margin: 10px;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.5em;
+    font-family: 'pixelar', mono space, sans-serif;
+}
+.airdrop-card-holder em, em {
+    color: red;
+    font-style: normal;
+}
+
+.airdrop-card {
+    display: inline-block;
+    border: 2px solid #4A235A;
+    background-color: rgba(0,0,0,.8);
+
+}
+
+.airdrop-head{
+    margin-bottom: 10px;
+    border-bottom:  2px solid #4A235A;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-content: center;
+    align-items: center;
+}
+
+.airdrop-head span {
+    flex: 0 1 auto;
+    align-self: auto;
+}
+.cat-type {
+    color: orange;
+}
+.airdrop-number {
+    color: grey;
+}
+
+.airdrop-foot{
+    margin-top: 10px;
+    border-top:  2px solid #4A235A;
+    padding: 5px;
+}
+
+.cat-name {
+    text-align: center;
+    padding: 10px;
+    color: #eee;
+}
+
+.cat-name.unnamed{
+    color: grey;
+
+}

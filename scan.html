@@ -1,0 +1,350 @@
+<html>
+    <head>
+	<meta charset="utf-8">
+	<title>MoonCat Scanner</title>
+	<link rel="stylesheet" type="text/css" href="css/site.css">
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<link rel="icon" href="favicon.ico">
+    </head>
+    <body>
+	<script src="js/mooncatparser.js"></script>
+	<script src="js/mine.js"></script>
+	<script src="js/contract.js"></script>
+	<script src="js/search.js"></script>
+	<div id="background1"></div>
+	<div id="background2"></div>
+	<script src="js/background.js">	</script>
+	<nav>
+	    <span class="logotype">MoonCatRescue</span>
+	    <a href>Home</a>
+	    <a href="adopt.html">Adoption Center</a>
+	    <a href="scan.html" class="active">Find Cats</a>
+	    <a href="info.html">More Info</a>
+	</nav>
+
+	<h1 class="center">MoonCat&#8203;Rescue</h1>
+	<div class="center clear-panel">
+	    <div id="wait" style="display:none">
+
+		<div class="panel">
+		    <div class="info">
+			Mining Cats through this page requires <a href="https://metamask.io/">MetaMask</a>. Please ensure you have it installed & running and that your account is unlocked.
+		    </div>
+		    <div class="info">
+			Alternatively, if you know what you are doing, you can click the button below which will allow you to mine for cats, but will require you to submit the seed to the blockchain manually.
+		    </div>
+		</div>
+		<h2 class="hex">Waiting For Web3</h2>
+		<div>
+		    <button class="cancel reset-btn">Rescue Manually</button>
+		</div>
+
+	    </div>
+	    <div id="idle" style="display:none">
+		<div class="panel">
+		    <div class="info">
+		      All slots on the ship are now filled.
+		    </div>
+		    <div class="info">
+		      <em>The mission was a success</em>
+		    </div>
+		    <div class="info">
+		      No more cats, no matter how adorable, can be rescued.
+		    </div>
+		    <div class="info">
+		      You can still scan to see cats who got left behind!
+		    </div>
+		</div>
+		<div>
+		    <select id="cores"></select>
+		</div>
+		<div>
+		    <button id="scan-btn" class="okay">Scan for Cats</button>
+		</div>
+	    </div>
+
+	    <div id="mine" style="display:none">
+		<div class="panel">
+		    <div class="info">
+			Scanning for adorable mooncats...
+		    </div>
+		</div>
+		<canvas id="moon"></canvas>
+	    </div>
+
+	    <div id="choose" style="display:none">
+		<div class="panel auto">
+		    <div class="info">
+			Cat Found!
+		    </div>
+		</div>
+		<div class="panel manual">
+		    <div class="info">
+			Cat Found!
+		    </div>
+		    <div class="info">
+		      This kitten will live out his days happily in underground moon caverns.
+		    </div>
+		    <div class="info">
+		      <em>He can't be rescued</em>, but he's glad you stopped by to say hi.
+		    </div>
+		</div>
+		<img class="cat-image">
+		<div class="cat-id hex"></div>
+		<div class="cat-seed hex"></div>
+		<div class="cat-time hex"></div>
+		<div class="auto">
+		    <button class="ok" id="rescue-btn">Rescue Cat</button>
+		    <button class="cancel" id="leave-btn">Leave Cat</button>
+		</div>
+		<div class="manual">
+		    <button class="okay reset-btn">Scan For Another Cat</button>
+		</div>
+
+	    </div>
+	    <div id="rescue" style="display:none">
+		<div class="panel">Rescuing Cat..</div>
+		<br>
+		<div class="loader">Rescue in Progress</div>
+
+	    </div>
+	    <div id="success" style="display:none">
+		<div class="panel">
+		    <div class="info">
+			Success!
+		    </div>
+		    <div class="info">
+			Your cat was rescued. View and name your new cat over in the <a href="adopt.html">Adoption Center</a>!
+		    </div>
+		</div>
+		<img class="cat-image">
+		<div class="cat-id hex"></div>
+		<div class="cat-seed hex"></div>
+		<div class="cat-time hex"></div>
+
+		<button class="okay reset-btn">Find Another Cat</button>
+	    </div>
+
+	    <div id="failure" style="display:none">
+		<div class="panel">
+		    <div class="info">
+			Failed :(
+		    </div>
+		    <div class="info">
+			Something went wrong
+		    </div>
+		</div>
+		<img class="cat-image">
+		<div class="cat-id hex"></div>
+		<div class="cat-seed hex"></div>
+		<div class="cat-time hex"></div>
+		<button class="cancel reset-btn">Cancel</button>
+	    </div>
+
+
+	</div>
+
+	<script>
+	 var searchSeed = "0xd14b1349b8662386a0002c6dbc7f8ced11312226af1da67a1be7b28f66fed6cd";
+
+	 var mineCat = createMiner(searchSeed),
+	     account = null,
+	     catSeed = null,
+	     catId = null,
+	     catImage = null,
+	     catTime = null,
+	     rescueTx = null;
+
+
+	 function setDisplay(active){
+	     if(account){
+		 $(".auto").css("display", "block");
+		 $(".manual").css("display", "none");
+	     }else{
+		 $(".manual").css("display", "block");
+		 $(".auto").css("display", "none");
+	     }
+
+	     $("#wait").css("display", active == "wait" ? "block" : "none");
+	     $("#idle").css("display", active == "idle" ? "block" : "none");
+	     $("#mine").css("display", active == "mine" ? "block" : "none");
+	     $("#choose").css("display", active == "choose" ? "block" : "none");
+	     $("#rescue").css("display", active == "rescue" ? "block" : "none");
+	     $("#success").css("display", active == "success" ? "block" : "none");
+	     $("#failure").css("display", active == "failure" ? "block" : "none");
+	     if(active == "mine"){
+		 startSearchAnimation();
+	     }else{
+		 stopSearchAnimation();
+	     }
+	 }
+	 setDisplay("idle");
+	 /*function waitForWeb3(){
+	     setDisplay("wait");
+	 }
+	 */
+	 function idle(){
+	     setDisplay("idle");
+	 }
+	 function miningComplete(result){
+	     catSeed = result[0];
+	     catId = result[1];
+	     catImage = drawCat(catId);
+	     catTime = result[2];
+	     if(false && account){
+		 mcr.catOwners(catId, function(err, catOwner){
+		     if(catOwner == "0x0000000000000000000000000000000000000000"){
+			 setDisplay("choose");
+			 $(".cat-image").attr("src", catImage);
+			 $(".cat-id").html("id: " + catId);
+		       //$(".cat-seed").html("seed: " + catSeed);
+			 $(".cat-time").html("found in " + catTime + " seconds");
+		     }else{
+			 console.log("duplicate cat detected. rescanning...");
+			 startMining();
+		     }
+		 })
+	     }else{
+		 setDisplay("choose");
+		 $(".cat-image").attr("src", catImage);
+		 $(".cat-id").html("id: " + catId);
+                 //$(".cat-seed").html("seed: " + catSeed);
+		 $(".cat-time").html("found in " + catTime + " seconds");
+	     }
+	 }
+
+	 function startMining(){
+	     setDisplay("mine");
+	     var concurrency = parseInt($("#cores").val(), 10);
+	     mineCat(concurrency, miningComplete);
+	 }
+
+	 function checkForRescueReceipt(){
+	     if(rescueTx){
+		 web3.eth.getTransactionReceipt(rescueTx, function(err, result){
+		     if(err || result){
+			 //console.log(err);
+			 //console.log(JSON.stringify(result,null,2));
+		     }
+		     if(err){
+			 rescueTx = null;
+			 setDisplay("failure");
+		     }else if(result){
+			 var blockNumber = result.blockNumber;
+			 if(blockNumber){
+			     rescueTx = null;
+			     setDisplay("success");
+			 }else{
+			     setTimeout(checkForRescueReceipt, 5000);
+			 }
+		     }else{
+			 setTimeout(checkForRescueReceipt, 5000);
+		     }
+		 });
+	     }
+	 }
+
+	 function rescueCat(){
+	     setDisplay("rescue");
+	     mcr.rescueCat(catSeed, function(err, result){
+		 if(err) {
+		     setDisplay("failure");
+		 }else{
+		     rescueTx = result;
+		     checkForRescueReceipt();
+		 }
+	     })
+	 }
+
+	 function loadWeb3(){
+	     /*if (typeof web3 !== 'undefined') {
+		 var w = new Web3(web3.currentProvider);
+		 account = w.eth.defaultAccount;
+		 if(account){
+		     window.web3 = w;
+		     var mcr = loadMoonCatRescueContract(w, moonCatRescueContractAddress);
+		     window.mcr = mcr;
+		     idle();
+		 }else{
+		     setTimeout(loadWeb3, 1000);
+		 }
+	     }else{
+		 setTimeout(loadWeb3, 1000);
+	     }*/
+	 }
+
+	 $(document).ready(function() {
+	     for(var i = 0; i < navigator.hardwareConcurrency; i++){
+		 var c = i + 1;
+		 var selected = c == navigator.hardwareConcurrency - 1 ? "selected" : "";
+		 $("#cores").append($('<option value="' + c + '" '+selected+'>Use ' + c + ' CPU Core' + (c == 1 ? "" : "s") + '</option>'))
+	     }
+	     $("#contract-address").html(moonCatRescueContractAddress);
+	     $("#scan-btn").on('click', startMining);
+	     $("#rescue-btn").on('click', rescueCat);
+	     $(".reset-btn").on('click', idle);
+	     $("#leave-btn").on('click', function(){
+		 if(confirm("Sure about that?")){
+		     idle();
+		 }
+	     });
+
+	     //waitForWeb3()
+
+	     //loadWeb3();
+	 })
+
+	 function cb(err, result){var res = result ? result.toString():null;console.log(err, res)};
+
+	 function drawCat(catId, size){
+	     size = size || 10;
+	     var data = mooncatparser(catId);
+	     var canvas = document.createElement("canvas");
+	     canvas.width = size * data.length;
+	     canvas.height = size * data[1].length;
+	     var ctx = canvas.getContext("2d");
+
+	     for(var i = 0; i < data.length; i++){
+		 for(var j = 0; j < data[i].length; j++){
+		     var color = data[i][j];
+		     if(color){
+			 ctx.fillStyle = color;
+			 ctx.fillRect(i * size, j * size, size, size);
+		     }
+		 }
+	     }
+	     return canvas.toDataURL();
+	 }
+	 function sampleAllCats(){
+	     var $demo = $("#demoDraw");
+	     $demo.html("");
+	     for(var i = 0; i < 256; i++){
+		 var x = ("0" + i.toString(16)).slice(-2);
+		 var color = "#fff";
+		 if (Math.floor(i / 4) % 4 == 0) {
+		     color = "green";
+		 }
+
+		 var $cat = $('<div class="demo-cat" style="background-color:'+color+'"><img src="' + drawCat("ff" + x + "000000",2) + '"></div>').appendTo($demo);
+		 $('<div>id: '+ "ff" + x + "000ca7" +'</div>').appendTo($cat);
+	     }
+	 }
+
+	</script>
+	<div id="countdown-cover" style="display:none;">
+	    <div id="countdown">
+		<div id="countdown-text">The MoonCatRescue Operation Begins In:</div>
+		<div id="countdown-timer">
+		</div>
+	    </div>
+	</div>
+
+	<script src="js/countdown.js"></script>
+
+	<div id="remaining-cats">
+	    <em><span id="remaining-cats-count"></span></em>
+	    <a href="adopt.html">Cats Remain
+	</a></div>
+	<script src="js/remaining.js"></script>
+    </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MoonCatRescue</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/site.css">
+    <style>
+
+     @font-face {
+       font-family: 'logotype';
+       src: url('fonts/setbackt.ttf');
+     }
+     @font-face {
+       font-family: 'logotype-small';
+       src: url('fonts/joystix_monospace-webfont.woff2'), url('fonts/joystix_monospace-webfont.woff2');
+     }
+
+     @font-face {
+       font-family: 'screen1';
+       src: url('fonts/MunroSmall.ttf');
+     }
+
+     @font-face {
+       font-family: 'screen2';
+       src: url('fonts/MunroNarrow.ttf');
+     }
+
+     @font-face {
+       font-family: 'pixelar';
+       src: url('fonts/pixelar_regular-webfont.woff2'), url('fonts/pixelar_regular-webfont.woff');
+     }
+     .vote button {
+       font-size: 1.1em;
+       margin: 15px;
+     }
+
+
+     input, textarea{
+       position: relative;
+       margin-left: 5px;
+       margin-right: 5px;
+       font-size: 0.8em;
+       padding: 8px 12px;
+       color: #222;
+       font-family: 'pixelar', courier, mono space, sans-serif;
+       background-color: #fff;
+       border: 2px solid grey;
+       width:46ch;
+       /*box-shadow: inset 6px 6px 0px 0px #333, inset 8px 8px 0px 0px #444444;
+	  text-shadow: 6px 6px 0px #3a3a3a;*/
+     }
+
+     input, textarea{
+       outline: none;
+       border-color: green;
+     }
+
+     input:focus.invalid, textarea:focus.invalid {
+       border-color: red;
+     }
+
+
+    </style>
+    <link rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <div id="background1"></div>
+    <div id="background2"></div>
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../js/background.js"> </script>
+    <nav>
+      <span class="logotype">MoonCatRescue</span>
+      <a href="../">Home</a>
+      <a href="../adopt.html">Adoption Center</a>
+      <a href="../scan.html">Find Cats</a>
+      <a href="../info.html">More Info</a>
+      <a href class="active">Vote</a>
+    </nav>
+    <h1 class="center">MoonCatKey&#8203;Vote</h1>
+    <div class="panel">
+      <div class="info">
+	<h2>Manual Voting</h2>
+	<p>
+	  If you need to vote by manually interacting with the voting <span id="smartcontractaddress">smart contract</span> you will need to call the <em>submitVote</em> function with 2 parameters:
+	</p>
+	<ol>
+	  <li>
+	    Your <em>eligibilityProof</em> (see below)
+	  </li>
+	  <li>
+	    Your <em>vote</em>
+	    <ul>
+	      <li>
+		true = <em>yes</em>
+	      </li>
+	      <li>
+		false = <em>no</em>
+	      </li>
+	    </ul>
+	  </li>
+	</ol>
+	<p>
+	  Submit to the smart contract, which can be viewed <span id="smartcontractaddress2">here</span>. Attempting to submit more than one vote per address will result in an error, and the transaction containing the duplicate vote will be rejected.
+	</p>
+	<hr>
+	<h3>Generate Eligibility Proof</h3>
+	<p>
+	  The smart contract uses a <a target="_blank" href="https://en.wikipedia.org/wiki/Merkle_tree">merkle tree</a> to verify that a voter is <a target="_blank" href="eligible_voter_list.txt">eligible</a>. The root of the tree is already in the smart contract. The proof is an array of values which the contract combines with <em>the address submitting the transaction</em> (i.e. your address) to verify your eligibility.
+	</p>
+	<p>
+	  The tool below will generate the proof for any address. The <em>proof must match the address that is submitting the transaction.</em>.
+	</p>
+	<div class="center">
+	  <div>
+	    <label for="address-input">Your Address:</label>
+	    <input id="address" name="address-input" placeholder="0x0000000000000000000000000000000000000000">
+	  </div>
+	  <div>
+	    <br>
+	    Eligibility Proof
+	    <textarea id="proof" rows="1" style="width:100%;border-color:#888;" placeholder="Proof Will Appear Here"></textarea>
+	    <!-- <button id="gen-proof" style="background-color:orange;">Generate</button>-->
+	  </div>
+	</div>
+
+
+      </div>
+    </div>
+    <script src="js/web3.min.js"></script>
+    <script src="js/merkletree.js"></script>
+    <script src="js/eligible_addresses.js"></script>
+    <script src="js/eligible.js"> </script>
+
+    <script>
+     var $address = document.getElementById("address");
+     var $proof = document.getElementById("proof");
+     var $gen = document.getElementById("gen-proof");
+     var lastProof = "";
+     $address.addEventListener('input', function(e){
+       var address = e.target.value.trim().replace(/[^0-9a-fA-Fx]/g, "");
+       $address.value = address;
+
+       if(address.length == 42){
+	 $address.style = "";
+	 //$gen.style = "background-color:green;";
+       }else{
+	 $address.style = "border-color:red;";
+	 //$gen.style = "background-color:red;";
+       }
+
+
+
+       //})
+
+       //$gen.addEventListener('click', function(){
+       var address = $address.value.trim();
+       if(address.length < 42){
+	 $proof.value = "Invalid Address (too short)";
+	 return;
+       }else if (address.length > 42){
+	 $proof.value = "Invalid Address (too long)";
+	 return;
+
+       }
+       try {
+	 var proof = EMT.getHexProof(address);
+       }catch (e){
+	 console.error(e);
+	 $proof.value = "Invalid Address (error generating proof)";
+	 return;
+       }
+
+       if ( proof.length === 0){
+	 $proof.value = "Ineligible Address";
+       }else{
+	 lastProof = JSON.stringify(proof).replace(/"/g, "");
+	 $proof.value = lastProof;
+	 $proof.rows = 10;
+       }
+     })
+     //$proof.addEventListener('input', function(e){
+     //  $proof.value = lastProof;
+     //})
+
+
+     document.getElementById('smartcontractaddress').innerHTML = "<a target='_blank' href='https://etherscan.io/address/" + voteContractAddress + "#code'>smart contract</a>";
+     document.getElementById('smartcontractaddress2').innerHTML = "<a target='_blank' href='https://etherscan.io/address/" + voteContractAddress + "#code'>here</a>";
+    </script>
+
+  </body>
+</html>

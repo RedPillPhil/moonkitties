@@ -1,0 +1,146 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MoonCat Adoption Center</title>
+    <link rel="stylesheet" type="text/css" href="css/site.css">
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <link rel="icon" href="favicon.ico">
+  </head>
+  <body>
+    <script src="js/mooncatparser.js"></script>
+    <script src="js/web3.min_v%3D2.js"></script>
+    <script src="js/contract_v%3D2.js"></script>
+    <div id="background1"></div>
+    <div id="background2"></div>
+    <script src="js/background.js">	</script>
+    <nav>
+      <span class="logotype">MoonCatRescue</span>
+      <a href>Home</a>
+      <a href="adopt.html" class="active">Adoption Center</a>
+      <a href="scan.html">Find Cats</a>
+      <a href="info.html">More Info</a>
+    </nav>
+    <h1 class="center">MoonCat&#8203;Rescue</h1>
+    <div id="connectbuttoncontainer" style="text-align:center;"><button id="connectweb3" style="display:none">Connect Web3 For Live Updates</button></div>
+    <div class="panel">
+      <div class="info">
+        <p>
+          <a href="https://mooncat.community/acclimator">The Acclimator</a> is now online! It gives your MoonCats full <em>ERC721</em> functionality & more. 
+        </p>
+        <p>
+          While we are hard at work <em>renovating</em> the adoption center, you can exchange AcclimatedMoonCats on <a href="https://opensea.io/assets/acclimatedmooncats">OpenSea</a>, where the fee goes towards funding our ongoing <a href="https://mooncat.community">MoonCatCommunity</a> development and projects.
+        </p>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="info">
+	<p style="text-align:center">
+	  <em>* Urgent Transmission *</em>
+	</p>
+	<p>
+	  We've been alerted to possible <em>space pirates</em> on the hunt for <em>front-running attack</em> opportunities.
+	</p>
+	<p>
+	  Be <em>wary of unsolicited adoption requests.</em> When a request is accepted, pirates could create a transaction using a higher gas fee to <em>lower the price</em> just before the request is filled. We are working towards a solution. In the meantime, <em>we recommend only selling your cats by offering them</em>, not by accepting requests.
+	</p>
+	<p>
+	  Don't worry, aside from this issue with requests, <em>the MoonCats resting in your wallet are safe.</em>
+	</p>
+	<p>
+	  Remember: space is a <em>dangerous place</em>, and the crypto-space particularly so.
+	</p>
+      </div>
+    </div>
+    <div id="app"></div>
+    <script>
+
+     function loadCatData(cb){
+       //$.getJSON("https://mooncats.info").then(function(result){
+       $.getJSON("https://mooncats.live").then(function(result){
+	 cb(null, result);
+       }).catch(function(err){
+	 cb(err, null);
+       })
+     }
+     $loadButton = document.getElementById('connectweb3');
+
+     function loadWeb3(cb){
+       if (window.ethereum) {
+	 var w3 = new Web3(window.ethereum);
+	 var mcr = loadMoonCatRescueContract(w3, moonCatRescueContractAddress);
+
+	 ethereum.request({method: 'eth_accounts'})
+		 .then(function (accounts) {
+		   if(Array.isArray(accounts) && accounts[0]){
+		     account = accounts[0];
+		     $loadButton.style=  "display:none";
+		     console.log("account", account)
+		     cb(null, w3, mcr, account);
+		   }else{
+
+		     $loadButton.addEventListener('click', function(){
+		       ethereum.request({method: 'eth_requestAccounts'})
+			       .then(function (x, y, z){
+
+				 if(x[0]){
+				   account = x[0];
+				   $loadButton.style ="display:none";
+				   console.log("account", account);
+				   cb(null, w3, mcr, account);
+				 }
+			       })
+			       .catch(function (x){
+				 console.log("error", x);
+			       })
+		     })
+		     $loadButton.style="";
+		   }
+		 })
+
+       }else{
+	 $loadButton.style = "background-color: goldenrod"
+	 $loadButton.innerHTML = "No Web3 provider found, please install MetaMask"
+       }
+     }
+
+
+     function drawCat(catId, size){
+       size = size || 10;
+       var data = mooncatparser(catId);
+       var canvas = document.createElement("canvas");
+       canvas.width = size * data.length;
+       canvas.height = size * data[1].length;
+       var ctx = canvas.getContext("2d");
+
+       for(var i = 0; i < data.length; i++){
+	 for(var j = 0; j < data[i].length; j++){
+	   var color = data[i][j];
+	   if(color){
+	     ctx.fillStyle = color;
+	     ctx.fillRect(i * size, j * size, size, size);
+	   }
+	 }
+       }
+       return canvas.toDataURL();
+     }
+
+    </script>
+    <script src="js/app_version%3D1.js"></script>
+
+    <div id="countdown-cover" style="display:none;">
+      <div id="countdown">
+	<div id="countdown-text">The MoonCatRescue Operation Begins In:</div>
+	<div id="countdown-timer">
+	</div>
+      </div>
+    </div>
+
+    <script src="js/countdown.js"></script>
+
+    <div id="remaining-cats">
+      <em><span id="remaining-cats-count"></span></em>
+      <a href="adopt.html">Cats Remain
+    </a></div>
+    <script src="js/remaining.js"></script>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MoonCatRescue</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/site.css">
+    <style>
+
+     @font-face {
+       font-family: 'logotype';
+       src: url('fonts/setbackt.ttf');
+     }
+     @font-face {
+       font-family: 'logotype-small';
+       src: url('fonts/joystix_monospace-webfont.woff2'), url('fonts/joystix_monospace-webfont.woff2');
+     }
+
+     @font-face {
+       font-family: 'screen1';
+       src: url('fonts/MunroSmall.ttf');
+     }
+
+     @font-face {
+       font-family: 'screen2';
+       src: url('fonts/MunroNarrow.ttf');
+     }
+
+     @font-face {
+       font-family: 'pixelar';
+       src: url('fonts/pixelar_regular-webfont.woff2'), url('fonts/pixelar_regular-webfont.woff');
+     }
+     .vote button {
+       font-size: 1.1em;
+       margin: 15px;
+     }
+
+
+    </style>
+    <link rel="icon" href="../favicon.ico">
+  </head>
+  <body>
+    <div id="background1"></div>
+    <div id="background2"></div>
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../js/background.js"> </script>
+    <nav>
+      <span class="logotype">MoonCatRescue</span>
+      <a href="../">Home</a>
+      <a href="../adopt.html">Adoption Center</a>
+      <a href="../scan.html">Find Cats</a>
+      <a href="../info.html">More Info</a>
+      <a href class="active">Vote</a>
+    </nav>
+    <h1 class="center">MoonCatKey&#8203;Vote</h1>
+    <div class="panel">
+      <div class="info">
+	<h2>This is <em>not</em> a Drill</h2>
+	<h3>Should the devs destroy the MoonCatRescue private key?</h3>
+	<p>
+	  A week ago, MoonCatRescue was unearthed. The official website's connection to the Ethereum blockchain was broken, but that <em>didn't stop ethereans</em> from interacting with the contract directly and <em>rescuing the remaining MoonCats</em>. (Nice!)
+	</p>
+	<p>
+	  Unfortunately, the contract <em>wasn't yet completely free from dev interference</em>. The devs, still had and <em>have the ability to call `addGenesisCatGroup` function up to 10 more times</em>. Each call would release a group of 16 Genesis MoonCats. If we call this function naively, the remaining GMC are likely to be purchased by bots paying extremely high gas prices. There may, however, be technical solutions to avoid this now or in the future. See our take <a target="_blank" href="https://twitter.com/ponderware/status/1371905006891372544">here</a>, and an analysis of possible technical solutions by <a target="_blank" href="https://twitter.com/midnight426">midnightlightning</a> <a target="_blank" href="https://www.reddit.com/r/MoonCatRescue/comments/m75cvi/if_the_genesis_cats_get_released_then_what/">here</a>.
+	</p>
+	<p>
+	  </p><p>So we are asking the MoonCatRescue community to decide. <em>You all helped resurrect the project</em>. We don't think it's right to make the decision for you. See more on our reasons <a target="_blank" href="https://twitter.com/ponderware/status/1371888442884362243">here.</a> We consider ourselves <em>members of the community</em>, but given our position and the fact that we have 3 Genesis MoonCats, we have a conflict of interest and have made it so <em>our addresses are ineligible to vote.</em>
+	</p>
+
+	<p>We're confident that either way the vote goes, the <em>community can thrive</em>. This is an issue that reasonable people can disagree on. (Note: either way, the remaining <em>GMC will still live happy lives</em>, be it here or on the Moon.)</p>
+
+	<p style="text-align: center">
+	  The mainnet voting smart contract can be reviewed <span id="smartcontractaddress">here</span>.
+	</p>
+	<p>
+	  If you don't have a compatible web3 provider you can get the data you need <a href="manual.html">vote manually here</a>.
+	</p>
+	<hr>
+	<h3>Binary Ballot Question</h3>
+	<p>
+	  <span style="color:darkorange;">"Should the MoonCatRescue developers destroy their private key so that no future Genesis MoonCats can ever be released?"</span>
+	</p>
+	<p>
+	  A <em>YES</em> outcome means that the private key is <em>destroyed</em> and  <span style="color:darkorange;">no more Genesis MoonCats can ever be released.</span>
+	</p>
+	<p>
+	  A <em>NO</em> outcome means that the private key is <em>preserved</em> and <span style="color:darkorange;">the community works together to determine a method for releasing the remaining Genesis MoonCats.</span>
+	</p>
+	<hr>
+	<h3>Vote Details</h3>
+	<p>
+	  Pending the successful completion of the <a target="_blank" href="../testvote/">testnet contract</a>:
+	</p>
+	<p style="color:darkorange;">
+	  Voting will open on Saturday March 20, 2021 at approximately 12:00 (noon) UTC. Voting will remain open for 48 hours.
+	</p>
+	<p style="color:darkorange;">
+	  All addresses which interacted with the original <a target="_blank" href="https://etherscan.io/address/0x60cd862c9c687a9de49aecdc3a99b74a4fc54ab6">MoonCatRescue</a> smart contract, or the main  <a target="_blank" href="https://etherscan.io/token/0x7c40c393dc0f283f318791d746d894ddd3693572">Wrapped MoonCatRescue</a> contract before <em>Block #12047300</em> are <a target="_blank" href="eligible_voter_list.txt">eligible</a> to vote.
+	</p>
+	<hr>
+	<h3>MoonCat Giveaway</h3>
+	<p>
+	  After the vote is complete, we will be <em>airdropping</em> a total of five MoonCats (4 Rescues, and 1 Genesis). <em>Five voter addresses will selected at random</em> and each will receive one of the MoonCats. <em>To be eligible</em> to receive one of these MoonCats, <em>you must vote.</em>
+	</p>
+
+	<!-- <p>This page allows you to access the <em>Remaining Genesis MoonCat Vote</em> <span id="smartcontractaddress">smart contract</span>.</p>-->
+      </div>
+    </div>
+    <script src="js/web3.min.js"></script>
+    <script src="js/merkletree.js"></script>
+    <script src="js/eligible_addresses.js"></script>
+    <script src="js/eligible.js"> </script>
+
+    <div id="app"></div>
+
+    <!-- <script src="cljs-out/dev-main.js" type="text/javascript"></script> -->
+    <script src="js/vote.js"></script>
+    <script>
+      document.getElementById('smartcontractaddress').innerHTML = "<a target='_blank' href='https://etherscan.io/address/" + voteContractAddress + "#code'>here</a>";
+    </script>
+
+  </body>
+</html>
