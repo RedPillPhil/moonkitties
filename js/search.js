@@ -9,7 +9,7 @@ moon image - http://binarymillenium.soup.io/post/195579525/Lunar-DTM100-to-Blend
 	var image;
 	var context;
 	var myImg = new Image();
-	myImg.src = "img/lunarsurface.jpg";
+	myImg.src = "img/lunarsurface1.png";
 
 	var rotation = 0;
 	var interval;
